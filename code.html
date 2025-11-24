@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MedPlus Diagnostic Centre Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --primary: #2563eb;
+      --primary-soft: #dbeafe;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --danger: #ef4444;
+      --success: #16a34a;
+      --warning: #f59e0b;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top left, #eff6ff 0, #f9fafb 40%, #eef2ff 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    .layout {
+      display: flex;
+      width: 100%;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 260px;
+      background: rgba(15, 23, 42, 0.97);
+      color: white;
+      padding: 24px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #93c5fd, #1d4ed8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+    }
+
+    .brand-text h1 {
+      font-size: 18px;
+    }
+
+    .brand-text span {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .nav-section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: #6b7280;
+      margin-bottom: 6px;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+    }
+
+    .nav-link {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #e5e7eb;
+      border: 1px solid transparent;
+      transition: all .18s ease;
+      background: transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-link::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0 0, rgba(96,165,250,0.35), transparent 55%);
+      opacity: 0;
+      transition: opacity .2s ease;
+      pointer-events: none;
+    }
+
+    .nav-link span.icon {
+      width: 22px;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .nav-link:hover {
+      background: rgba(31, 41, 55, 0.9);
+      border-color: rgba(55, 65, 81, 0.9);
+    }
+
+    .nav-link:hover::after {
+      opacity: 1;
+    }
+
+    .nav-link.active {
+      background: #eff6ff;
+      color: #111827;
+      border-color: #bfdbfe;
+      box-shadow: 0 0 0 1px rgba(191, 219, 254, .8), 0 12px 30px rgba(15, 23, 42, 0.5);
+    }
+
+    .nav-link.active span.icon {
+      color: var(--primary);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    .main {
+      flex: 1;
+      padding: 22px 26px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .topbar-left h2 {
+      font-size: 21px;
+      margin-bottom: 2px;
+    }
+
+    .topbar-left span {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      background: white;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 10px rgba(148, 163, 184, 0.5);
+    }
+
+    .pill strong {
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.4);
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: #1d4ed8;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 600;
+      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.7);
+    }
+
+    /* Cards */
+    .card {
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: var(--shadow-soft);
+      padding: 18px 18px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -60%;
+      background: radial-gradient(circle at 0 0, rgba(191,219,254,0.25), transparent 55%);
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .metric-card {
+      background: linear-gradient(135deg, #eff6ff, #ffffff);
+      border-radius: var(--radius-md);
+      border: 1px solid #dbeafe;
+      padding: 10px 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 100% 0, rgba(59,130,246,0.14), transparent 60%);
+      opacity: 0;
+      transition: opacity .2s ease;
+      pointer-events: none;
+    }
+
+    .metric-card:hover::after {
+      opacity: 1;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .metric-value {
+      font-size: 19px;
+      font-weight: 600;
+    }
+
+    .metric-trend {
+      font-size: 11px;
+    }
+
+    .metric-trend.positive {
+      color: var(--success);
+    }
+
+    .metric-trend.negative {
+      color: var(--danger);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 11px;
+    }
+
+    .badge.green {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .badge.red {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .badge.blue {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .badge.yellow {
+      background: #fef9c3;
+      color: #854d0e;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0 0, rgba(255,255,255,0.6), transparent 50%);
+      opacity: 0;
+      transition: opacity .2s ease;
+    }
+
+    .btn:hover::after {
+      opacity: 1;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.6);
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .btn-outline {
+      background: white;
+      color: var(--primary);
+      border: 1px solid #bfdbfe;
+    }
+
+    .btn-sm {
+      padding: 4px 9px;
+      font-size: 11px;
+    }
+
+    .inline-input {
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 5px 9px;
+      font-size: 12px;
+      background: white;
+      transition: box-shadow .15s ease, border-color .15s ease;
+    }
+
+    .inline-input::placeholder {
+      color: #9ca3af;
+    }
+
+    .inline-input:focus {
+      outline: none;
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 1px rgba(147,197,253,0.8), 0 0 0 4px rgba(191,219,254,0.7);
+    }
+
+    .section {
+      display: none;
+      gap: 14px;
+      flex-direction: column;
+    }
+
+    .section.active {
+      display: flex;
+      animation: fadeIn .2s ease-out;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 4px;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    thead {
+      background: #f3f4f6;
+    }
+
+    th, td {
+      padding: 7px 8px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      font-size: 12px;
+      text-transform: uppercase;
+      color: #6b7280;
+      letter-spacing: .03em;
+    }
+
+    tr:hover td {
+      background: #f9fafb;
+    }
+
+    .field-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .field {
+      flex: 1;
+      min-width: 180px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 12px;
+    }
+
+    .field label {
+      color: #4b5563;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 6px 8px;
+      font-size: 13px;
+      transition: box-shadow .15s ease, border-color .15s ease;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 1px rgba(147,197,253,0.8), 0 0 0 4px rgba(191,219,254,0.7);
+    }
+
+    .field textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    .tabs {
+      display: inline-flex;
+      background: #e5e7eb;
+      border-radius: 999px;
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .tab {
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 11px;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: #4b5563;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tab::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0 0, rgba(255,255,255,0.7), transparent 55%);
+      opacity: 0;
+      transition: opacity .2s ease;
+    }
+
+    .tab:hover::after {
+      opacity: 1;
+    }
+
+    .tab.active {
+      background: white;
+      color: var(--primary);
+      font-weight: 600;
+      box-shadow: 0 1px 4px rgba(148, 163, 184, 0.6);
+    }
+
+    .tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #f9fafb;
+      color: var(--muted);
+    }
+
+    /* Slot scheduler */
+    .slot-legend {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .slot-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-right: 4px;
+    }
+
+    .slot-dot.available {
+      background: #22c55e;
+      box-shadow: 0 0 0 4px rgba(34,197,94,0.4);
+      animation: pulseGreen 2s infinite;
+    }
+
+    .slot-dot.booked {
+      background: #ef4444;
+      box-shadow: 0 0 0 4px rgba(239,68,68,0.4);
+    }
+
+    .slot-grid {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-top: 4px;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .slot-grid th,
+    .slot-grid td {
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      padding: 6px 6px;
+      vertical-align: middle;
+    }
+
+    .slot-grid th:last-child,
+    .slot-grid td:last-child {
+      border-right: none;
+    }
+
+    .slot-grid tr:last-child td {
+      border-bottom: none;
+    }
+
+    .slot-row-time {
+      font-weight: 600;
+      font-size: 11px;
+      color: #4b5563;
+      white-space: nowrap;
+    }
+
+    .slot-cell {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+    }
+
+    .slot-bubble {
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      cursor: pointer;
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease, border-color .12s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slot-bubble.available {
+      background: #dcfce7;
+      border-color: #22c55e;
+      box-shadow: 0 0 0 2px rgba(134,239,172,0.8);
+      animation: subtlePulse 2.2s infinite;
+    }
+
+    .slot-bubble.booked {
+      background: #fee2e2;
+      border-color: #ef4444;
+      box-shadow: 0 0 0 1px rgba(248,113,113,0.8);
+    }
+
+    .slot-bubble:hover {
+      transform: translateY(-1px) scale(1.05);
+      box-shadow: 0 4px 10px rgba(148, 163, 184, 0.8);
+    }
+
+    .slot-bubble::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0 0, rgba(255,255,255,0.85), transparent 60%);
+      opacity: 0;
+      transition: opacity .15s ease;
+    }
+
+    .slot-bubble:active::after {
+      opacity: 1;
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.4);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      animation: fadeIn .18s ease-out;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      background: white;
+      border-radius: 18px;
+      padding: 18px 20px 14px;
+      width: 460px;
+      max-width: 94vw;
+      box-shadow: var(--shadow-soft);
+      animation: popIn .18s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .modal::before {
+      content: "";
+      position: absolute;
+      inset: -60%;
+      background: radial-gradient(circle at 0 0, rgba(191,219,254,0.45), transparent 55%);
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .modal-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 18px;
+      color: #6b7280;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    /* Animations */
+    @keyframes subtlePulse {
+      0% { box-shadow: 0 0 0 2px rgba(134,239,172,0.8); }
+      50% { box-shadow: 0 0 0 4px rgba(134,239,172,0.2); }
+      100% { box-shadow: 0 0 0 2px rgba(134,239,172,0.8); }
+    }
+
+    @keyframes pulseGreen {
+      0% { box-shadow: 0 0 0 4px rgba(34,197,94,0.5); }
+      50% { box-shadow: 0 0 0 8px rgba(34,197,94,0.0); }
+      100% { box-shadow: 0 0 0 4px rgba(34,197,94,0.5); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(6px) scale(.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @media (max-width: 960px) {
+      .sidebar {
+        display: none;
+      }
+      .main {
+        padding: 16px;
+      }
+      .grid-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .grid-4 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div>
+      <div class="brand">
+        <div class="brand-logo">Dx</div>
+        <div class="brand-text">
+          <h1>MedPlus Partner</h1>
+          <span>Diagnostic Centre Portal</span>
+        </div>
+      </div>
+
+      <div style="margin-top:24px;">
+        <div class="nav-section-title">menu</div>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <button class="nav-link active" data-section="dx-dashboard">
+              <span class="icon">📊</span>
+              <span>Dashboard</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-section="dx-bookings">
+              <span class="icon">📅</span>
+              <span>Bookings & Slots</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-section="dx-reports">
+              <span class="icon">📄</span>
+              <span>Reports Upload</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-section="dx-payments">
+              <span class="icon">💰</span>
+              <span>Payments</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-section="dx-profile">
+              <span class="icon">🏥</span>
+              <span>Centre Profile</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div>Logged in as</div>
+      <div style="font-weight:600;">Vijay Diagnostics</div>
+      <div style="margin-top:6px;">Hyderabad • TPA Partner</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h2>Good morning, Vijay Diagnostics 👋</h2>
+        <span>Track bookings, manage slots, upload reports and see your payouts.</span>
+      </div>
+      <div class="topbar-right">
+        <div class="pill">
+          <span class="status-dot"></span>
+          <span>Integration:&nbsp;<strong>Live</strong></span>
+        </div>
+        <div class="pill">
+          Today:&nbsp;<strong>20 Nov 2025</strong>
+        </div>
+        <div class="pill">
+          Bookings:&nbsp;<strong id="pill-bookings">28</strong>
+        </div>
+        <div class="avatar">V</div>
+      </div>
+    </header>
+
+    <!-- DASHBOARD SECTION -->
+    <section class="section active" id="dx-dashboard">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Centre Snapshot</div>
+            <div class="card-subtitle">Operational overview for today and recent payouts.</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <select class="inline-input">
+              <option>Today</option>
+              <option>Last 7 days</option>
+              <option>Last 30 days</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid-4">
+          <div class="metric-card">
+            <div class="metric-label">Bookings Today</div>
+            <div class="metric-value" id="kpi-bookings">28</div>
+            <div class="metric-trend positive">+3 vs yesterday</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Patients Arrived</div>
+            <div class="metric-value" id="kpi-arrived">19 / 28</div>
+            <div class="metric-trend">68% arrival rate</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Tests Completed</div>
+            <div class="metric-value" id="kpi-completed">14</div>
+            <div class="metric-trend">10 reports uploaded</div>
+          </div>
+          <div class="metric-card" style="background:linear-gradient(135deg,#dcfce7,#ffffff);border:1px solid #bbf7d0;">
+            <div class="metric-label">Payments (Last 24 hrs)</div>
+            <div class="metric-value" id="kpi-payments">₹ 38,400</div>
+            <div class="metric-trend positive">All eligible tests paid within SLA</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Modality Performance Today</div>
+            <div class="card-subtitle">Volume, SLA and TAT for each machine.</div>
+          </div>
+        </div>
+        <table>
+          <thead>
+          <tr>
+            <th>Modality</th>
+            <th>Tests Today</th>
+            <th>On-time Report %</th>
+            <th>Avg TAT (hrs)</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>MRI (3T)</td>
+            <td>6</td>
+            <td>100%</td>
+            <td>3.2</td>
+          </tr>
+          <tr>
+            <td>CT (64-slice)</td>
+            <td>4</td>
+            <td>90%</td>
+            <td>2.5</td>
+          </tr>
+          <tr>
+            <td>X-Ray Room 1</td>
+            <td>10</td>
+            <td>95%</td>
+            <td>1.1</td>
+          </tr>
+          <tr>
+            <td>Ultrasound Room</td>
+            <td>8</td>
+            <td>88%</td>
+            <td>1.8</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- BOOKINGS & SLOTS -->
+    <section class="section" id="dx-bookings">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Bookings & Slot Scheduler</div>
+            <div class="card-subtitle">Default view shows all booked tests; switch to slot view to see availability.</div>
+          </div>
+          <div class="tabs">
+            <button class="tab active" data-booking-tab="list">Bookings</button>
+            <button class="tab" data-booking-tab="slots">Slot Scheduler</button>
+          </div>
+        </div>
+
+        <!-- BOOKINGS LIST -->
+        <div id="bookings-list-view">
+          <div class="field-row" style="margin-top:4px;">
+            <div class="field">
+              <label>Search & Filters</label>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <input class="inline-input" id="booking-search" placeholder="Search by patient / test / booking ID" />
+                <select class="inline-input" id="booking-status-filter">
+                  <option value="all">All statuses</option>
+                  <option value="Pending">Pending Arrival</option>
+                  <option value="Arrived">Arrived</option>
+                  <option value="Completed">Completed</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <table id="booking-table">
+            <thead>
+            <tr>
+              <th>Booking ID</th>
+              <th>Patient</th>
+              <th>Test</th>
+              <th>Modality</th>
+              <th>Slot</th>
+              <th>Status</th>
+              <th style="text-align:right;">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr data-status="Pending" data-modality="MRI" data-slot="08:30 AM">
+              <td>BKG-2101</td>
+              <td>Rahul Verma</td>
+              <td>MRI Brain (3T)</td>
+              <td>MRI</td>
+              <td>08:30 AM</td>
+              <td><span class="badge yellow">Pending arrival</span></td>
+              <td style="text-align:right;">
+                <button class="btn btn-secondary btn-sm" data-open-arrival="BKG-2101">Mark Arrived</button>
+              </td>
+            </tr>
+            <tr data-status="Arrived" data-modality="CT" data-slot="09:00 AM">
+              <td>BKG-2102</td>
+              <td>Neha Singh</td>
+              <td>CT Chest</td>
+              <td>CT</td>
+              <td>09:00 AM</td>
+              <td><span class="badge blue">Arrived</span></td>
+              <td style="text-align:right;">
+                <button class="btn btn-secondary btn-sm" data-open-report="BKG-2102">Upload Report</button>
+              </td>
+            </tr>
+            <tr data-status="Completed" data-modality="XRay" data-slot="09:30 AM">
+              <td>BKG-2103</td>
+              <td>Arjun Mehta</td>
+              <td>X-Ray Knee</td>
+              <td>X-Ray</td>
+              <td>09:30 AM</td>
+              <td><span class="badge green">Completed</span></td>
+              <td style="text-align:right;">
+                <button class="btn btn-secondary btn-sm" data-open-report="BKG-2103">View / Re-upload</button>
+              </td>
+            </tr>
+            <tr data-status="Arrived" data-modality="USG" data-slot="10:00 AM">
+              <td>BKG-2104</td>
+              <td>Priya Nair</td>
+              <td>USG Abdomen</td>
+              <td>USG</td>
+              <td>10:00 AM</td>
+              <td><span class="badge blue">Arrived</span></td>
+              <td style="text-align:right;">
+                <button class="btn btn-secondary btn-sm" data-open-report="BKG-2104">Upload Report</button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- SLOT SCHEDULER VIEW -->
+        <div id="slots-view" style="display:none;margin-top:10px;">
+          <div class="slot-legend">
+            <span><span class="slot-dot booked"></span>Booked</span>
+            <span><span class="slot-dot available"></span>Available</span>
+            <span class="tag">Click any bubble to view slot details</span>
+          </div>
+
+          <table class="slot-grid">
+            <thead>
+            <tr>
+              <th style="width:80px;">Time</th>
+              <th>MRI Room</th>
+              <th>CT Room</th>
+              <th>X-Ray Room 1</th>
+              <th>Ultrasound Room</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Each row = time block -->
+            <tr>
+              <td class="slot-row-time">08:00 AM</td>
+              <td><div class="slot-cell">
+                <div class="slot-bubble available" data-time="08:00 AM" data-machine="MRI" data-booked="0" data-capacity="1" title="MRI 08:00 AM"></div>
+              </div></td>
+              <td><div class="slot-cell">
+                <div class="slot-bubble booked" data-time="08:00 AM" data-machine="CT" data-booked="2" data-capacity="2" title="CT 2/2 booked"></div>
+              </div></td>
+              <td><div class="slot-cell">
+                <!-- X-ray capacity 6/hr -> 3 per 30min block -->
+                <div class="slot-bubble booked" data-time="08:00 AM" data-machine="X-Ray" data-booked="2" data-capacity="3" title="Booked"></div>
+                <div class="slot-bubble available" data-time="08:00 AM" data-machine="X-Ray" data-booked="2" data-capacity="3" title="Available"></div>
+                <div class="slot-bubble available" data-time="08:00 AM" data-machine="X-Ray" data-booked="2" data-capacity="3" title="Available"></div>
+              </div></td>
+              <td><div class="slot-cell">
+                <div class="slot-bubble available" data-time="08:00 AM" data-machine="USG" data-booked="0" data-capacity="3"></div>
+                <div class="slot-bubble available" data-time="08:00 AM" data-machine="USG" data-booked="0" data-capacity="3"></div>
+                <div class="slot-bubble available" data-time="08:00 AM" data-machine="USG" data-booked="0" data-capacity="3"></div>
+              </div></td>
+            </tr>
+            <tr>
+              <td class="slot-row-time">08:30 AM</td>
+              <td><div class="slot-cell">
+                <!-- BKG-2101 at 08:30 MRI -->
+                <div class="slot-bubble booked" data-time="08:30 AM" data-machine="MRI" data-booked="1" data-capacity="1" title="MRI booked"></div>
+              </div></td>
+              <td><div class="slot-cell">
+                <div class="slot-bubble available" data-time="08:30 AM" data-machine="CT" data-booked="0" data-capacity="2"></div>
+                <div class="slot-bubble available" data-time="08:30 AM" data-machine="CT" data-booked="0" data-capacity="2"></div>
+              </div></td>
+              <td><div class="slot-cell">
+                <div class="slot-bubble available" data-time="08:30 AM" data-machine="X-Ray" data-booked="0" data-capacity="3"></div>
+                <div class="slot-bubble available" data-time="08:30 AM" data-machine="X-Ray" data-booked="0" data-capacity="3"></div>
+                <div class="slot-bubble available" data-time="08:30 AM" data-machine="X-Ray" data-booked="0" data-capacity="3"></div>
+              </div></td>
+              <td><div class="slot-cell">
+                <div class="slot-bubble available" data-time="08:30 AM" data-machine="USG" data-booked="0" data-capacity="3"></div>
+                <div class="slot-bubble available" data-time="08:30 AM" data-machine="USG" data-booked="0" data-capacity="3"></div>
+                <div class="slot-bubble available" data-time="08:30 AM" data-machine="USG" data-booked="0" data-capacity="3"></div>
+              </div></td>
+            </tr>
+            <tr>
+              <td class="slot-row-time">09:00 AM</td>
+              <td><div class="slot-cell">
+                <div class="slot-bubble available" data-time="09:00 AM" data-machine="MRI" data-booked="0" data-capacity="1"></div>
+              </div></td>
+              <td><div class="slot-cell">
+                <!-- BKG-2102 CT 09:00 -->
+                <div class="slot-bubble booked" data-time="09:00 AM" data-machine="CT" data-booked="1" data-capacity="2" title="Booked"></div>
+                <div class="slot-bubble available" data-time="09:00 AM" data-machine="CT" data-booked="1" data-capacity="2" title="Available"></div>
+              </div></td>
+              <td><div class="slot-cell">
+                <div class="slot-bubble available" data-time="09:00 AM" data-machine="X-Ray" data-booked="0" data-capacity="3"></div>
+                <div class="slot-bubble available" data-time="09:00 AM" data-machine="X-Ray" data-booked="0" data-capacity="3"></div>
+                <div class="slot-bubble available" data-time="09:00 AM" data-machine="X-Ray" data-booked="0" data-capacity="3"></div>
+              </div></td>
+              <td><div class="slot-cell">
+                <div class="slot-bubble available" data-time="09:00 AM" data-machine="USG" data-booked="0" data-capacity="3"></div>
+                <div class="slot-bubble available" data-time="09:00 AM" data-machine="USG" data-booked="0" data-capacity="3"></div>
+                <div class="slot-bubble available" data-time="09:00 AM" data-machine="USG" data-booked="0" data-capacity="3"></div>
+              </div></td>
+            </tr>
+            <tr>
+              <td class="slot-row-time">09:30 AM</td>
+              <td><div class="slot-cell">
+                <div class="slot-bubble available" data-time="09:30 AM" data-machine="MRI" data-booked="0" data-capacity="1"></div>
+              </div></td>
+              <td><div class="slot-cell">
+                <div class="slot-bubble available" data-time="09:30 AM" data-machine="CT" data-booked="0" data-capacity="2"></div>
+                <div class="slot-bubble available" data-time="09:30 AM" data-machine="CT" data-booked="0" data-capacity="2"></div>
+              </div></td>
+              <td><div class="slot-cell">
+                <!-- BKG-2103 X-ray 09:30 -->
+                <div class="slot-bubble booked" data-time="09:30 AM" data-machine="X-Ray" data-booked="1" data-capacity="3" title="Booked"></div>
+                <div class="slot-bubble available" data-time="09:30 AM" data-machine="X-Ray" data-booked="1" data-capacity="3" title="Available"></div>
+                <div class="slot-bubble available" data-time="09:30 AM" data-machine="X-Ray" data-booked="1" data-capacity="3" title="Available"></div>
+              </div></td>
+              <td><div class="slot-cell">
+                <div class="slot-bubble available" data-time="09:30 AM" data-machine="USG" data-booked="0" data-capacity="3"></div>
+                <div class="slot-bubble available" data-time="09:30 AM" data-machine="USG" data-booked="0" data-capacity="3"></div>
+                <div class="slot-bubble available" data-time="09:30 AM" data-machine="USG" data-booked="0" data-capacity="3"></div>
+              </div></td>
+            </tr>
+            <tr>
+              <td class="slot-row-time">10:00 AM</td>
+              <td><div class="slot-cell">
+                <div class="slot-bubble available" data-time="10:00 AM" data-machine="MRI" data-booked="0" data-capacity="1"></div>
+              </div></td>
+              <td><div class="slot-cell">
+                <div class="slot-bubble available" data-time="10:00 AM" data-machine="CT" data-booked="0" data-capacity="2"></div>
+                <div class="slot-bubble available" data-time="10:00 AM" data-machine="CT" data-booked="0" data-capacity="2"></div>
+              </div></td>
+              <td><div class="slot-cell">
+                <div class="slot-bubble available" data-time="10:00 AM" data-machine="X-Ray" data-booked="0" data-capacity="3"></div>
+                <div class="slot-bubble available" data-time="10:00 AM" data-machine="X-Ray" data-booked="0" data-capacity="3"></div>
+                <div class="slot-bubble available" data-time="10:00 AM" data-machine="X-Ray" data-booked="0" data-capacity="3"></div>
+              </div></td>
+              <td><div class="slot-cell">
+                <!-- BKG-2104 USG 10:00 -->
+                <div class="slot-bubble booked" data-time="10:00 AM" data-machine="USG" data-booked="1" data-capacity="3" title="Booked"></div>
+                <div class="slot-bubble available" data-time="10:00 AM" data-machine="USG" data-booked="1" data-capacity="3"></div>
+                <div class="slot-bubble available" data-time="10:00 AM" data-machine="USG" data-booked="1" data-capacity="3"></div>
+              </div></td>
+            </tr>
+            <!-- You can extend with more time rows if needed -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- REPORTS UPLOAD -->
+    <section class="section" id="dx-reports">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Reports Upload</div>
+            <div class="card-subtitle">Upload pathology reports and radiology scans to trigger payouts.</div>
+          </div>
+          <button class="btn btn-outline btn-sm">View all uploaded</button>
+        </div>
+
+        <table>
+          <thead>
+          <tr>
+            <th>Booking ID</th>
+            <th>Patient</th>
+            <th>Test</th>
+            <th>Type</th>
+            <th>Scan/Report</th>
+            <th>Payment Status</th>
+            <th style="text-align:right;">Action</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>BKG-2102</td>
+            <td>Neha Singh</td>
+            <td>CT Chest</td>
+            <td>Radiology</td>
+            <td><span class="badge red">Image pending</span></td>
+            <td><span class="badge red">Not paid</span></td>
+            <td style="text-align:right;">
+              <button class="btn btn-primary btn-sm" data-open-report="BKG-2102">Upload Image</button>
+            </td>
+          </tr>
+          <tr>
+            <td>BKG-2104</td>
+            <td>Priya Nair</td>
+            <td>USG Abdomen</td>
+            <td>Radiology</td>
+            <td><span class="badge red">Image pending</span></td>
+            <td><span class="badge red">Not paid</span></td>
+            <td style="text-align:right;">
+              <button class="btn btn-primary btn-sm" data-open-report="BKG-2104">Upload Image</button>
+            </td>
+          </tr>
+          <tr>
+            <td>BKG-2103</td>
+            <td>Arjun Mehta</td>
+            <td>X-Ray Knee</td>
+            <td>Radiology</td>
+            <td><span class="badge green">Uploaded</span></td>
+            <td><span class="badge green">Paid</span></td>
+            <td style="text-align:right;">
+              <button class="btn btn-secondary btn-sm" data-open-report="BKG-2103">View</button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PAYMENTS -->
+    <section class="section" id="dx-payments">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">TPA Payments</div>
+            <div class="card-subtitle">Payouts auto-trigger within 24 hours of report upload.</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <select class="inline-input">
+              <option>Last 7 days</option>
+              <option>Last 30 days</option>
+              <option>This month</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-4" style="margin-bottom:12px;">
+          <div class="metric-card">
+            <div class="metric-label">Paid (Last 7 days)</div>
+            <div class="metric-value">₹ 2,14,600</div>
+            <div class="metric-trend positive">98% tests paid on time</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Pending Amount</div>
+            <div class="metric-value">₹ 12,800</div>
+            <div class="metric-trend">Awaiting report upload</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Payments Today</div>
+            <div class="metric-value">₹ 38,400</div>
+            <div class="metric-trend positive">10 tests settled</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Oldest Pending (days)</div>
+            <div class="metric-value">2</div>
+            <div class="metric-trend negative">Upload reports to trigger payout</div>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+          <tr>
+            <th>Booking ID</th>
+            <th>Test</th>
+            <th>Rate (₹)</th>
+            <th>Report Uploaded</th>
+            <th>Payment Status</th>
+            <th>Paid On</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>BKG-2091</td>
+            <td>MRI Brain</td>
+            <td>2,400</td>
+            <td>Yes</td>
+            <td><span class="badge green">Paid</span></td>
+            <td>19 Nov 2025</td>
+          </tr>
+          <tr>
+            <td>BKG-2098</td>
+            <td>CBC</td>
+            <td>150</td>
+            <td>No</td>
+            <td><span class="badge red">Not paid</span></td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td>BKG-2103</td>
+            <td>X-Ray Knee</td>
+            <td>400</td>
+            <td>Yes</td>
+            <td><span class="badge green">Paid</span></td>
+            <td>20 Nov 2025</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- CENTRE PROFILE -->
+    <section class="section" id="dx-profile">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Centre Profile</div>
+            <div class="card-subtitle">Basic details configured for your diagnostic centre.</div>
+          </div>
+          <button class="btn btn-secondary btn-sm">Request profile update</button>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Centre Name</label>
+            <input value="Vijay Diagnostics – Kukatpally" disabled />
+          </div>
+          <div class="field">
+            <label>Partner ID</label>
+            <input value="TPA-VDX-102" disabled />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Address</label>
+            <input value="Kukatpally, Hyderabad, Telangana" disabled />
+          </div>
+          <div class="field">
+            <label>Primary SPOC</label>
+            <input value="Mahesh Reddy (+91 98xxxxxx34)" disabled />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Services Enabled</label>
+            <input value="Radiology (MRI/CT/X-Ray/USG), Pathology" disabled />
+          </div>
+          <div class="field">
+            <label>API / Integration</label>
+            <input value="Slot integration live, Report via portal / MedPACS" disabled />
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- MODALS -->
+
+<!-- Arrival Modal -->
+<div class="modal-backdrop" id="arrival-modal">
+  <div class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="arrival-modal-title">Mark Arrival</div>
+        <button class="modal-close" data-close-modal="arrival-modal">&times;</button>
+      </div>
+      <div style="font-size:12px;margin-bottom:6px;color:#6b7280;">
+        Confirm that the patient has arrived at your centre. If using OTP, verify before marking arrival.
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Booking ID</label>
+          <input id="arrival-booking-id" disabled />
+        </div>
+        <div class="field">
+          <label>Patient Name</label>
+          <input id="arrival-patient" disabled />
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Modality</label>
+          <input id="arrival-modality" disabled />
+        </div>
+        <div class="field">
+          <label>Slot Time</label>
+          <input id="arrival-slot" disabled />
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Arrival Method</label>
+          <select id="arrival-method">
+            <option value="QR">QR scanned</option>
+            <option value="OTP">OTP verified</option>
+            <option value="Manual">Manual confirmation</option>
+          </select>
+        </div>
+        <div class="field" id="otp-field-wrapper">
+          <label>OTP (if applicable)</label>
+          <input id="arrival-otp" placeholder="Enter 4-6 digit OTP" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" data-close-modal="arrival-modal">Cancel</button>
+        <button class="btn btn-primary btn-sm" id="arrival-confirm-btn">Mark Arrived</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Report Modal -->
+<div class="modal-backdrop" id="report-modal">
+  <div class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="report-modal-title">Upload Report / Scan</div>
+        <button class="modal-close" data-close-modal="report-modal">&times;</button>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Booking ID</label>
+          <input id="report-booking-id" disabled />
+        </div>
+        <div class="field">
+          <label>Test</label>
+          <input id="report-test" disabled />
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Upload Type</label>
+          <select id="report-type">
+            <option>PDF Report (Pathology)</option>
+            <option>Image / DICOM Link (Radiology)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>File</label>
+          <input type="file" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Comments (optional)</label>
+        <textarea placeholder="Any notes for the MedPlus reporting doctor..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" data-close-modal="report-modal">Cancel</button>
+        <button class="btn btn-primary btn-sm">Upload & mark ready</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slot Details Modal -->
+<div class="modal-backdrop" id="slot-modal">
+  <div class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="slot-modal-title">Slot Details</div>
+        <button class="modal-close" data-close-modal="slot-modal">&times;</button>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Machine</label>
+          <input id="slot-machine" disabled />
+        </div>
+        <div class="field">
+          <label>Time</label>
+          <input id="slot-time" disabled />
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Capacity</label>
+          <input id="slot-capacity" disabled />
+        </div>
+        <div class="field">
+          <label>Status</label>
+          <input id="slot-status" disabled />
+        </div>
+      </div>
+      <div class="field">
+        <label>Notes</label>
+        <textarea disabled id="slot-notes">Slot details are for reference only in this mockup. Actual integration would show patient names and booking IDs mapped to this time & machine.</textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" data-close-modal="slot-modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Sidebar navigation
+  const navLinks = document.querySelectorAll(".nav-link");
+  const sections = document.querySelectorAll(".section");
+
+  navLinks.forEach(link => {
+    link.addEventListener("click", () => {
+      const target = link.dataset.section;
+      navLinks.forEach(l => l.classList.remove("active"));
+      link.classList.add("active");
+      sections.forEach(sec => {
+        sec.classList.toggle("active", sec.id === target);
+      });
+    });
+  });
+
+  // Booking tabs (Bookings vs Slots)
+  const bookingTabs = document.querySelectorAll("[data-booking-tab]");
+  const bookingsListView = document.getElementById("bookings-list-view");
+  const slotsView = document.getElementById("slots-view");
+
+  bookingTabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      const tabId = tab.dataset.bookingTab;
+      bookingTabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      if (tabId === "list") {
+        bookingsListView.style.display = "";
+        slotsView.style.display = "none";
+      } else {
+        bookingsListView.style.display = "none";
+        slotsView.style.display = "";
+      }
+    });
+  });
+
+  // Booking search + filter
+  const bookingSearch = document.getElementById("booking-search");
+  const bookingStatusFilter = document.getElementById("booking-status-filter");
+  const bookingRows = document.querySelectorAll("#booking-table tbody tr");
+
+  function filterBookings() {
+    const q = bookingSearch.value.toLowerCase();
+    const status = bookingStatusFilter.value;
+    bookingRows.forEach(row => {
+      const text = row.innerText.toLowerCase();
+      const rowStatus = row.dataset.status;
+      const matchesText = text.includes(q);
+      const matchesStatus = status === "all" || status === rowStatus;
+      row.style.display = (matchesText && matchesStatus) ? "" : "none";
+    });
+  }
+
+  bookingSearch.addEventListener("input", filterBookings);
+  bookingStatusFilter.addEventListener("change", filterBookings);
+
+  // Modal helpers
+  function openModal(id) {
+    document.getElementById(id).classList.add("open");
+  }
+  function closeModal(id) {
+    document.getElementById(id).classList.remove("open");
+  }
+  document.querySelectorAll("[data-close-modal]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      closeModal(btn.dataset.closeModal);
+    });
+  });
+  document.querySelectorAll(".modal-backdrop").forEach(backdrop => {
+    backdrop.addEventListener("click", e => {
+      if (e.target === backdrop) backdrop.classList.remove("open");
+    });
+  });
+
+  // Arrival modal wiring
+  document.querySelectorAll("[data-open-arrival]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const bookingId = btn.dataset.openArrival;
+      const row = btn.closest("tr");
+      const patient = row.children[1].innerText;
+      const test = row.children[2].innerText;
+      const modality = row.children[3].innerText;
+      const slot = row.children[4].innerText;
+
+      document.getElementById("arrival-booking-id").value = bookingId;
+      document.getElementById("arrival-patient").value = patient;
+      document.getElementById("arrival-modality").value = modality;
+      document.getElementById("arrival-slot").value = slot;
+      document.getElementById("arrival-modal-title").textContent =
+        "Mark Arrival – " + patient;
+      document.getElementById("arrival-otp").value = "";
+      openModal("arrival-modal");
+    });
+  });
+
+  // Show/hide OTP field based on method
+  const arrivalMethodSelect = document.getElementById("arrival-method");
+  const otpFieldWrapper = document.getElementById("otp-field-wrapper");
+  arrivalMethodSelect.addEventListener("change", () => {
+    const method = arrivalMethodSelect.value;
+    if (method === "OTP") {
+      otpFieldWrapper.style.opacity = "1";
+    } else {
+      otpFieldWrapper.style.opacity = "0.6";
+    }
+  });
+
+  // Confirm arrival mock logic
+  document.getElementById("arrival-confirm-btn").addEventListener("click", () => {
+    const bookingId = document.getElementById("arrival-booking-id").value;
+    const method = arrivalMethodSelect.value;
+    const otpVal = document.getElementById("arrival-otp").value;
+
+    if (method === "OTP" && otpVal.trim().length < 4) {
+      alert("Please enter a valid OTP (mock validation).");
+      return;
+    }
+
+    // Update bookings table row
+    bookingRows.forEach(row => {
+      if (row.children[0].innerText === bookingId) {
+        row.dataset.status = "Arrived";
+        row.children[5].innerHTML = '<span class="badge blue">Arrived</span>';
+      }
+    });
+
+    // Very simple KPI update (mock)
+    const arrivedKpi = document.getElementById("kpi-arrived");
+    // Not recomputing, just visually adjusting in mock
+    arrivedKpi.textContent = "20 / 28";
+
+    closeModal("arrival-modal");
+  });
+
+  // Report modal wiring (from bookings & reports tables)
+  document.querySelectorAll("[data-open-report]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const bookingId = btn.dataset.openReport;
+      let row = btn.closest("tr");
+      const testName = row.children[2].innerText;
+
+      document.getElementById("report-booking-id").value = bookingId;
+      document.getElementById("report-test").value = testName;
+      document.getElementById("report-modal-title").textContent =
+        "Upload Report / Scan – " + bookingId;
+
+      openModal("report-modal");
+    });
+  });
+
+  // Slot bubbles -> slot details modal
+  document.querySelectorAll(".slot-bubble").forEach(bubble => {
+    bubble.addEventListener("click", () => {
+      const time = bubble.dataset.time;
+      const machine = bubble.dataset.machine;
+      const booked = bubble.dataset.booked;
+      const capacity = bubble.dataset.capacity;
+      const isBooked = bubble.classList.contains("booked");
+      const status = isBooked ? "One or more bookings in this slot" : "No booking yet (available)";
+
+      document.getElementById("slot-machine").value = machine;
+      document.getElementById("slot-time").value = time;
+      document.getElementById("slot-capacity").value = booked + " booked / " + capacity + " capacity";
+      document.getElementById("slot-status").value = status;
+      document.getElementById("slot-modal-title").textContent =
+        "Slot – " + machine + " @ " + time;
+
+      openModal("slot-modal");
+    });
+  });
+</script>
+</body>
+</html>
